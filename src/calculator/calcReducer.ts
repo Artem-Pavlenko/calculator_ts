@@ -9,22 +9,19 @@ export type ActionsType = ReturnType<typeof onDigitClick>
     | ReturnType<typeof setWaitDigit>
     | ReturnType<typeof equals>
 
-type Sort = 'leftOperand' | 'rightOperand' | 'result'
 
 export type CalcType = {
     display: string,
     leftDigit: string,
     operator: null | Operator,
-    sortDigit: boolean,
-    temp: any
+    sortDigit: boolean
 }
 
 export const initState: CalcType = {
     display: '0',
     leftDigit: '',
     operator: null,
-    sortDigit: true,
-    temp: ''
+    sortDigit: true
 }
 
 
@@ -38,7 +35,8 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             if (sortDigit) {
                 return {...state, display: num}
             } else if (!sortDigit) {
-                return {...state, leftDigit: display, sortDigit: true, display: action.num}
+                const num = display === '0.' ? display + action.num : action.num
+                return {...state, leftDigit: display, sortDigit: true, display: num}
             } else {
                 return state
             }

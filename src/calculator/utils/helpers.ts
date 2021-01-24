@@ -1,5 +1,5 @@
 
-export function round(value: number, decimals: number = 5) {
+export function round(value: number, decimals: number = 7) {
     return Number(Math.round(Number(value + 'e' + decimals))+'e-'+decimals);
 }
 
