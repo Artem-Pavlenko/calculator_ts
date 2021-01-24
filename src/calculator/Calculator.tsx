@@ -4,14 +4,14 @@ import {
     calcReducer,
     clearDisplay,
     Digit,
-    doOperation, equals,
+    doOperation,
+    equals,
     initState,
     onDigitClick,
     onDot,
     Operator,
     setWaitDigit
-} from "./calcReducer";
-import {round} from "./utils/helpers";
+} from './calcReducer'
 
 const Calculator = () => {
 
@@ -21,13 +21,11 @@ const Calculator = () => {
         dispatch(onDigitClick(num))
     }
 
-    console.log(round(35.874993, 3))
-
-    console.log('L :', state.leftDigit)
+    // console.log('L :', state.leftDigit)
     // console.log('R :', state.rightDigit)
-    console.log('display :', state.display)
-    console.log('operator', state.operator)
-    console.log('sort : ', state.sortDigit)
+    // console.log('display :', state.display)
+    // console.log('operator', state.operator)
+    // console.log('sort : ', state.trigger)
 
     const onOperation = (operator: Operator) => {
         dispatch(setWaitDigit())
