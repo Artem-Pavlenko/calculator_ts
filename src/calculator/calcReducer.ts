@@ -1,4 +1,5 @@
-import {round} from "./utils/helpers";
+import {round} from "./utils/helpers"
+
 
 export type Operator = '+' | '-' | '*' | '/' | '=' | null
 export type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0'
@@ -11,9 +12,9 @@ export type ActionsType = ReturnType<typeof onDigitClick>
 
 
 export type CalcType = {
-    display: string,
-    leftDigit: string,
-    operator: null | Operator,
+    display: string
+    leftDigit: string
+    operator: null | Operator
     sortDigit: boolean
 }
 
@@ -51,9 +52,15 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
         case "SET_WAIT_DIGIT":
             return {...state, sortDigit: false}
         case "DO_OPERATION":
+            // если нету оператора то сетаем его
             if (!operator) {
                 return {...state, operator: action.operator, leftDigit: display}
+                // в случае если уже был задан оператор и хотим выполнить следующее вычисление
             } else if (operator) {
+                // проходимся на свичу и сетаем следущий оператор
+                if (display === '0' || display === '0.') {
+                    return {...state, display: '0', leftDigit: '', sortDigit: true, operator: null}
+                }
                 switch (operator) {
                     case "+":
                         const plusNum = round((+leftDigit) + (+display)).toString()
@@ -74,7 +81,9 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                             sortDigit: false, display: multipliedNum
                         }
                     case "/":
+
                         const splitNum = round((+leftDigit) / (+display)).toString()
+
                         return {
                             ...state, leftDigit: splitNum, operator: action.operator,
                             sortDigit: false, display: splitNum
@@ -109,8 +118,6 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                             ...state, leftDigit: splitNum, operator: null,
                             sortDigit: false, display: splitNum
                         }
-
-
                 }
             }
             return state
