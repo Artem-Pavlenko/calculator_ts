@@ -11,6 +11,7 @@ import {
     Operator,
     setWaitDigit
 } from "./calcReducer";
+import {round} from "./utils/helpers";
 
 const Calculator = () => {
 
@@ -19,6 +20,8 @@ const Calculator = () => {
     const onDigitClickHandler = (num: Digit) => {
         dispatch(onDigitClick(num))
     }
+
+    console.log(round(35.874993, 3))
 
     console.log('L :', state.leftDigit)
     // console.log('R :', state.rightDigit)
@@ -49,7 +52,7 @@ const Calculator = () => {
                     <button className={s.gray}>
                         %
                     </button>
-                    <button className={s.orange}>
+                    <button onClick={() => onOperation('/')} className={s.orange}>
                         ÷
                     </button>
                 </div>
@@ -77,7 +80,7 @@ const Calculator = () => {
                     <button onClick={() => onDigitClickHandler('9')}>
                         9
                     </button>
-                    <button className={s.orange}>
+                    <button onClick={() => onOperation('*')} className={s.orange}>
                         x
                     </button>
                 </div>
@@ -91,7 +94,7 @@ const Calculator = () => {
                     <button onClick={() => onDigitClickHandler('6')}>
                         6
                     </button>
-                    <button className={s.orange}>
+                    <button onClick={() => onOperation('-')} className={s.orange}>
                         -
                     </button>
                 </div>

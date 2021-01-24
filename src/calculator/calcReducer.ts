@@ -1,3 +1,5 @@
+import {round} from "./utils/helpers";
+
 export type Operator = '+' | '-' | '*' | '/' | '=' | null
 export type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0'
 export type ActionsType = ReturnType<typeof onDigitClick>
@@ -12,17 +14,17 @@ type Sort = 'leftOperand' | 'rightOperand' | 'result'
 export type CalcType = {
     display: string,
     leftDigit: string,
-    rightDigit: string,
     operator: null | Operator,
-    sortDigit: boolean
+    sortDigit: boolean,
+    temp: any
 }
 
 export const initState: CalcType = {
     display: '0',
     leftDigit: '',
-    rightDigit: '',
     operator: null,
-    sortDigit: true
+    sortDigit: true,
+    temp: ''
 }
 
 
@@ -32,10 +34,9 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
 
     switch (action.type) {
         case "SET_NUMBER":
-            // при вводе первого операнда
+            const num = display === '0' ? action.num : display + action.num
             if (sortDigit) {
-                return {...state, display: display === '0' ? action.num : display + action.num}
-                // при вводе второго операнда
+                return {...state, display: num}
             } else if (!sortDigit) {
                 return {...state, leftDigit: display, sortDigit: true, display: action.num}
             } else {
@@ -57,9 +58,28 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             } else if (operator) {
                 switch (operator) {
                     case "+":
+                        const plusNum = round((+leftDigit) + (+display)).toString()
                         return {
-                            ...state, leftDigit: ((+leftDigit) + (+display)).toString(), operator: null,
-                            sortDigit: true, display: ((+leftDigit) + (+display)).toString()
+                            ...state, leftDigit: plusNum, operator: action.operator,
+                            sortDigit: false, display: plusNum
+                        }
+                    case "-":
+                        const minusNum = round((+leftDigit) - (+display)).toString()
+                        return {
+                            ...state, leftDigit: minusNum, operator: action.operator,
+                            sortDigit: false, display: minusNum
+                        }
+                    case "*":
+                        const multipliedNum = round((+leftDigit) * (+display)).toString()
+                        return {
+                            ...state, leftDigit: multipliedNum, operator: action.operator,
+                            sortDigit: false, display: multipliedNum
+                        }
+                    case "/":
+                        const splitNum = round((+leftDigit) / (+display)).toString()
+                        return {
+                            ...state, leftDigit: splitNum, operator: action.operator,
+                            sortDigit: false, display: splitNum
                         }
                 }
             }
@@ -68,13 +88,34 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             if (operator) {
                 switch (operator) {
                     case "+":
+                        const plusNum = round((+leftDigit) + (+display)).toString()
                         return {
-                            ...state, leftDigit: '', operator: null,
-                            sortDigit: true, display: ((+leftDigit) + (+display)).toString()
+                            ...state, leftDigit: plusNum, operator: null,
+                            sortDigit: false, display: plusNum
                         }
+                    case "-":
+                        const minusNum = round((+leftDigit) - (+display)).toString()
+                        return {
+                            ...state, leftDigit: minusNum, operator: null,
+                            sortDigit: false, display: minusNum
+                        }
+                    case "*":
+                        const multipliedNum = round((+leftDigit) * (+display)).toString()
+                        return {
+                            ...state, leftDigit: multipliedNum, operator: null,
+                            sortDigit: false, display: multipliedNum
+                        }
+                    case "/":
+                        const splitNum = round((+leftDigit) / (+display)).toString()
+                        return {
+                            ...state, leftDigit: splitNum, operator: null,
+                            sortDigit: false, display: splitNum
+                        }
+
+
                 }
             }
-                return state
+            return state
 
         default:
             return state
