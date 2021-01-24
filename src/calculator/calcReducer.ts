@@ -7,34 +7,37 @@ export type ActionsType = ReturnType<typeof onDigitClick>
     | ReturnType<typeof setWaitDigit>
     | ReturnType<typeof equals>
 
+type Sort = 'leftOperand' | 'rightOperand' | 'result'
 
 export type CalcType = {
     display: string,
-    memory: string,
+    leftDigit: string,
+    rightDigit: string,
     operator: null | Operator,
-    waitDigit: boolean
+    sortDigit: boolean
 }
 
 export const initState: CalcType = {
     display: '0',
-    memory: '',
+    leftDigit: '',
+    rightDigit: '',
     operator: null,
-    waitDigit: true
+    sortDigit: true
 }
 
 
 export const calcReducer = (state: CalcType = initState, action: ActionsType): CalcType => {
 
-    const {waitDigit, display, memory, operator} = state
+    const {sortDigit, display, leftDigit, operator} = state
 
     switch (action.type) {
         case "SET_NUMBER":
             // при вводе первого операнда
-            if (waitDigit) {
+            if (sortDigit) {
                 return {...state, display: display === '0' ? action.num : display + action.num}
                 // при вводе второго операнда
-            } else if (!waitDigit) {
-                return {...state, memory: display, waitDigit: true, display: action.num}
+            } else if (!sortDigit) {
+                return {...state, leftDigit: display, sortDigit: true, display: action.num}
             } else {
                 return state
             }
@@ -45,28 +48,34 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                 return state
             }
         case "CLEAR":
-            return {...state, display: '0'}
+            return {...state, display: '0', leftDigit: '', sortDigit: true, operator: null}
         case "SET_WAIT_DIGIT":
-            return {...state, waitDigit: false}
+            return {...state, sortDigit: false}
         case "DO_OPERATION":
             if (!operator) {
-                return {...state, operator: action.operator}
+                return {...state, operator: action.operator, leftDigit: display}
             } else if (operator) {
                 switch (operator) {
                     case "+":
                         return {
-                            ...state, memory: '', operator: null,
-                            waitDigit: true, display: ((+memory) + (+display)).toString()
+                            ...state, leftDigit: ((+leftDigit) + (+display)).toString(), operator: null,
+                            sortDigit: true, display: ((+leftDigit) + (+display)).toString()
                         }
                 }
             }
             return state
         case "EQUALS":
             if (operator) {
-                return {...state, }
-            } else {
-                return state
+                switch (operator) {
+                    case "+":
+                        return {
+                            ...state, leftDigit: '', operator: null,
+                            sortDigit: true, display: ((+leftDigit) + (+display)).toString()
+                        }
+                }
             }
+                return state
+
         default:
             return state
     }

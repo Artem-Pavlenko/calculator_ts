@@ -4,7 +4,7 @@ import {
     calcReducer,
     clearDisplay,
     Digit,
-    doOperation,
+    doOperation, equals,
     initState,
     onDigitClick,
     onDot,
@@ -19,6 +19,12 @@ const Calculator = () => {
     const onDigitClickHandler = (num: Digit) => {
         dispatch(onDigitClick(num))
     }
+
+    console.log('L :', state.leftDigit)
+    // console.log('R :', state.rightDigit)
+    console.log('display :', state.display)
+    console.log('operator', state.operator)
+    console.log('sort : ', state.sortDigit)
 
     const onOperation = (operator: Operator) => {
         dispatch(setWaitDigit())
@@ -62,13 +68,13 @@ const Calculator = () => {
                     </button>
                 </div>
                 <div className={s.b}>
-                    <button onClick={ () => onDigitClickHandler('7')}>
+                    <button onClick={() => onDigitClickHandler('7')}>
                         7
                     </button>
-                    <button onClick={ () => onDigitClickHandler('8')}>
+                    <button onClick={() => onDigitClickHandler('8')}>
                         8
                     </button>
-                    <button onClick={ () => onDigitClickHandler('9')}>
+                    <button onClick={() => onDigitClickHandler('9')}>
                         9
                     </button>
                     <button className={s.orange}>
@@ -76,13 +82,13 @@ const Calculator = () => {
                     </button>
                 </div>
                 <div className={s.b}>
-                    <button onClick={ () => onDigitClickHandler('4')}>
+                    <button onClick={() => onDigitClickHandler('4')}>
                         4
                     </button>
-                    <button onClick={ () => onDigitClickHandler('5')}>
+                    <button onClick={() => onDigitClickHandler('5')}>
                         5
                     </button>
-                    <button onClick={ () => onDigitClickHandler('6')}>
+                    <button onClick={() => onDigitClickHandler('6')}>
                         6
                     </button>
                     <button className={s.orange}>
@@ -90,13 +96,13 @@ const Calculator = () => {
                     </button>
                 </div>
                 <div className={s.b}>
-                    <button onClick={ () => onDigitClickHandler('1')}>
+                    <button onClick={() => onDigitClickHandler('1')}>
                         1
                     </button>
-                    <button onClick={ () => onDigitClickHandler('2')}>
+                    <button onClick={() => onDigitClickHandler('2')}>
                         2
                     </button>
-                    <button onClick={ () => onDigitClickHandler('3')}>
+                    <button onClick={() => onDigitClickHandler('3')}>
                         3
                     </button>
                     <button onClick={() => onOperation('+')} className={s.orange}>
@@ -104,13 +110,13 @@ const Calculator = () => {
                     </button>
                 </div>
                 <div className={s.b6}>
-                    <button  onClick={ () => onDigitClickHandler('0')} className={s.zero}>
+                    <button onClick={() => onDigitClickHandler('0')} className={s.zero}>
                         0
                     </button>
                     <button onClick={() => dispatch(onDot())}>
                         ,
                     </button>
-                    <button className={s.orange}>
+                    <button onClick={() => dispatch(equals())} className={s.orange}>
                         =
                     </button>
                 </div>
