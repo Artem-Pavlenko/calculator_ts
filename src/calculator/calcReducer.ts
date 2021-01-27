@@ -32,7 +32,7 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
 
     switch (action.type) {
         case "SET_NUMBER":
-            const num = display === '0' ? action.num : display + action.num
+            const num = display === '0' || display === 'Ошибка' ? action.num : display + action.num
             if (trigger) {
                 return {...state, display: num}
             } else if (!trigger) {
@@ -51,40 +51,69 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             return {...state, display: '0', leftDigit: '', trigger: true, operator: null}
         case "SET_WAIT_DIGIT":
             return {...state, trigger: false}
-        case "DO_OPERATION":
+        case "OPERATION":
             // если нету оператора то сетаем его
             if (!operator) {
-                return {...state, operator: action.operator, leftDigit: display}
+                return {...state, operator: action.operator}
+
+                // return {...state, operator: action.operator, leftDigit: display}
+
                 // в случае если уже был задан оператор и хотим выполнить следующее вычисление
             } else if (operator) {
-                // проходимся на свичу и сетаем следущий оператор
-                if (display === '0' || display === '0.') {
+
+                if (!leftDigit && (display === '0' || display === '0.')) {
                     return {...state, display: '0', leftDigit: '', trigger: true, operator: null}
                 }
+                // проходимся по свичу, выполняя операцию ранее заданую, и сетаем следущий оператор
                 switch (operator) {
                     case "+":
                         const plusNum = round((+leftDigit) + (+display)).toString()
-                        return {
-                            ...state, leftDigit: plusNum, operator: action.operator,
-                            trigger: false, display: plusNum
+                        if (leftDigit) {
+                            return {
+                                ...state, leftDigit: plusNum, operator: action.operator,
+                                trigger: false, display: plusNum
+                            }
+                        } else {
+                            return {...state, operator: action.operator}
                         }
+
                     case "-":
                         const minusNum = round((+leftDigit) - (+display)).toString()
-                        return {
-                            ...state, leftDigit: minusNum, operator: action.operator,
-                            trigger: false, display: minusNum
+                        if (leftDigit) {
+                            return {
+                                ...state, leftDigit: minusNum, operator: action.operator,
+                                trigger: false, display: minusNum
+                            }
+                        } else {
+                            return {...state, operator: action.operator}
                         }
                     case "*":
                         const multipliedNum = round((+leftDigit) * (+display)).toString()
-                        return {
-                            ...state, leftDigit: multipliedNum, operator: action.operator,
-                            trigger: false, display: multipliedNum
+                        if (leftDigit) {
+                            return {
+                                ...state, leftDigit: multipliedNum, operator: action.operator,
+                                trigger: false, display: multipliedNum
+                            }
+                        } else {
+                            return {...state, operator: action.operator}
                         }
                     case "/":
                         const splitNum = round((+leftDigit) / (+display)).toString()
-                        return {
-                            ...state, leftDigit: splitNum, operator: action.operator,
-                            trigger: false, display: splitNum
+                        // делить на 0 нельзя =)
+                        if (display === '0' || display === "0.") return {
+                            ...state,
+                            leftDigit: '',
+                            display: 'Ошибка',
+                            operator: null,
+                            trigger: true
+                        }
+                        if (leftDigit) {
+                            return {
+                                ...state, leftDigit: splitNum, operator: action.operator,
+                                trigger: false, display: splitNum
+                            }
+                        } else {
+                            return {...state, operator: action.operator}
                         }
                 }
             }
@@ -112,6 +141,13 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                         }
                     case "/":
                         const splitNum = round((+leftDigit) / (+display)).toString()
+                        if (display === '0' || display === "0.") return {
+                            ...state,
+                            leftDigit: '',
+                            display: 'Ошибка',
+                            operator: null,
+                            trigger: true
+                        }
                         return {
                             ...state, leftDigit: splitNum, operator: null,
                             trigger: false, display: splitNum
@@ -127,6 +163,6 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
 export const onDigitClick = (num: Digit) => ({type: 'SET_NUMBER', num} as const)
 export const onDot = () => ({type: 'SET_DOT'} as const)
 export const clearDisplay = () => ({type: 'CLEAR'} as const)
-export const doOperation = (operator: Operator) => ({type: 'DO_OPERATION', operator} as const)
+export const doOperation = (operator: Operator) => ({type: 'OPERATION', operator} as const)
 export const setWaitDigit = () => ({type: 'SET_WAIT_DIGIT'} as const)
 export const equals = () => ({type: 'EQUALS'} as const)
