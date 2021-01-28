@@ -9,8 +9,7 @@ const App = () => {
 
     return (
         <div className="App">
-            <span onClick={() => setTrigger(prev => !prev)}>current : {trigger ? 'V1' : 'V2'}</span>
-            {trigger ? <Calculator/> : <Calc2/>}
+            <Calc2/>
         </div>
     )
 }

@@ -13,9 +13,9 @@ import {
 import './Button.scss'
 import {ButtonType} from '../buutons'
 
-type ButtonProps = ButtonType & { dispatch: Dispatch<ActionsType> }
+type ButtonProps = ButtonType & { dispatch: Dispatch<ActionsType> , active?: string | null }
 
-const Button = ({value, color, type, dispatch}: ButtonProps) => {
+const Button = ({value, color, type, dispatch, active}: ButtonProps) => {
 
     const onClick = () => {
         switch (type) {
@@ -49,7 +49,7 @@ const Button = ({value, color, type, dispatch}: ButtonProps) => {
 
     return (
         <div className={'wrapper'}>
-            <button className={cn(color, {['zero']: value === '0'})} onClick={onClick}>{value}</button>
+            <button className={cn(color, {['zero']: value === '0'}, {['active']: value === active})} onClick={onClick}>{value}</button>
         </div>
     )
 }

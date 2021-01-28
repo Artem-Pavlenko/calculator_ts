@@ -1,7 +1,7 @@
 import {round} from "./utils/helpers"
 
 
-export type Operator = '+' | '-' | '*' | '/' | '=' |  null
+export type Operator = '+' | '-' | '*' | '/' | '=' | null
 export type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0'
 export type ActionsType = ReturnType<typeof onDigitClick>
     | ReturnType<typeof doOperation>
@@ -12,34 +12,37 @@ export type ActionsType = ReturnType<typeof onDigitClick>
     | ReturnType<typeof plusMinus>
 
 
-
 export type CalcType = {
     display: string
     leftDigit: string
     operator: null | Operator
-    numTrigger: boolean
+    trigger: boolean
 }
 
 export const initState: CalcType = {
     display: '0',
     leftDigit: '',
     operator: null,
-    numTrigger: true
+    trigger: true
 }
 
 
 export const calcReducer = (state: CalcType = initState, action: ActionsType): CalcType => {
 
-    const {numTrigger, display, leftDigit, operator} = state
+    const {trigger, display, leftDigit, operator} = state
 
     switch (action.type) {
         case "SET_NUMBER":
-            const num = display === '0' || display === 'Ошибка' ? action.num : display + action.num
-            if (numTrigger) {
+
+            // const index = display.indexOf('-')
+            if (trigger) {
+                let num = (display === '0' || display === 'Ошибка') ? action.num : display + action.num
                 return {...state, display: num}
-            } else if (!numTrigger) {
-                const num = display === '0.' ? display + action.num : action.num
-                return {...state, leftDigit: display, numTrigger: true, display: num}
+            } else if (!trigger) {
+                let num = display === '0.' ? display + action.num : action.num
+                if (display.indexOf('-') === 0) {
+                }
+                return {...state, leftDigit: display, trigger: true, display: num}
             } else {
                 return state
             }
@@ -50,14 +53,23 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                 return state
             }
         case "CLEAR":
-            return {...state, display: '0', leftDigit: '', numTrigger: true, operator: null}
+            return {...state, display: '0', leftDigit: '', trigger: true, operator: null}
         case "SET_WAIT_DIGIT":
-            return {...state, numTrigger: false}
+            return {...state, trigger: false}
         case "PLUS_MINUS":
+            // !numTrigger  -> display: '-0'
+            // если нету минуса
             const index = display.indexOf('-')
             if (index === -1) {
+                if (operator && !trigger) {
+                    return {...state, display: '-0', leftDigit: display, trigger: true}
+                }
                 return {...state, display: '-' + display}
+                // если есть минус
             } else if (index === 0) {
+                if (operator && !trigger) {
+                    return {...state, leftDigit: display, display: '-0', trigger: true}
+                }
                 return {...state, display: display.substr(1)}
             }
             return {...state, display: '-' + display}
@@ -75,7 +87,7 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             } else if (operator) {
 
                 if (!leftDigit && (display === '0' || display === '0.')) {
-                    return {...state, display: '0', leftDigit: '', numTrigger: true, operator: null}
+                    return {...state, display: '0', leftDigit: '', trigger: true, operator: null}
                 }
                 // проходимся по свичу, выполняя операцию ранее заданую, и сетаем следущий оператор
                 switch (operator) {
@@ -85,7 +97,7 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
 
                             return {
                                 ...state, leftDigit: plusNum, operator: action.operator,
-                                numTrigger: false, display: plusNum
+                                trigger: false, display: plusNum
                             }
                         } else {
                             return {...state, operator: action.operator}
@@ -95,7 +107,7 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                         if (leftDigit) {
                             return {
                                 ...state, leftDigit: minusNum, operator: action.operator,
-                                numTrigger: false, display: minusNum
+                                trigger: false, display: minusNum
                             }
                         } else {
                             return {...state, operator: action.operator}
@@ -105,7 +117,7 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                         if (leftDigit) {
                             return {
                                 ...state, leftDigit: multipliedNum, operator: action.operator,
-                                numTrigger: false, display: multipliedNum
+                                trigger: false, display: multipliedNum
                             }
                         } else {
                             return {...state, operator: action.operator}
@@ -118,12 +130,12 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                             leftDigit: '',
                             display: 'Ошибка',
                             operator: null,
-                            numTrigger: true
+                            trigger: true
                         }
                         if (leftDigit) {
                             return {
                                 ...state, leftDigit: splitNum, operator: action.operator,
-                                numTrigger: false, display: splitNum
+                                trigger: false, display: splitNum
                             }
                         } else {
                             return {...state, operator: action.operator}
@@ -138,19 +150,19 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                         const plusNum = round((+leftDigit) + (+display)).toString()
                         return {
                             ...state, leftDigit: plusNum, operator: null,
-                            numTrigger: false, display: plusNum
+                            trigger: false, display: plusNum
                         }
                     case "-":
                         const minusNum = round((+leftDigit) - (+display)).toString()
                         return {
                             ...state, leftDigit: minusNum, operator: null,
-                            numTrigger: false, display: minusNum
+                            trigger: false, display: minusNum
                         }
                     case "*":
                         const multipliedNum = round((+leftDigit) * (+display)).toString()
                         return {
                             ...state, leftDigit: multipliedNum, operator: null,
-                            numTrigger: false, display: multipliedNum
+                            trigger: false, display: multipliedNum
                         }
                     case "/":
                         const splitNum = round((+leftDigit) / (+display)).toString()
@@ -159,11 +171,11 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                             leftDigit: '',
                             display: 'Ошибка',
                             operator: null,
-                            numTrigger: true
+                            trigger: true
                         }
                         return {
                             ...state, leftDigit: splitNum, operator: null,
-                            numTrigger: false, display: splitNum
+                            trigger: false, display: splitNum
                         }
                 }
             }
