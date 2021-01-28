@@ -54,12 +54,11 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
         case "OPERATION":
             // если нету оператора то сетаем его
             if (!operator) {
-                // if (!leftDigit && (display === '0' || display === '0.')) {
-                //     return {...state, operator: action.operator, display: '0'}
-                // }
-
+                // если после точки не было введено значение (цыфру)
+                if (display === '0.') {
+                    return {...state, operator: action.operator, display: '0'}
+                }
                 return {...state, operator: action.operator}
-
                 // return {...state, operator: action.operator, leftDigit: display}
 
                 // в случае если уже был задан оператор и хотим выполнить следующее вычисление
