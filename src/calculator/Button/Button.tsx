@@ -7,7 +7,7 @@ import {
     doOperation, equals,
     onDigitClick,
     onDot,
-    Operator,
+    Operator, plusMinus,
     setWaitDigit
 } from '../calcReducer'
 import './Button.scss'
@@ -26,18 +26,23 @@ const Button = ({value, color, type, dispatch}: ButtonProps) => {
                 dispatch(onDot())
                 break
             case "memory":
-                // alert('not ready')
+                // empty
                 break
             case "operator":
-                if (value === '=') {
-                    dispatch(equals())
-                } else {
-                    dispatch(setWaitDigit())
-                    dispatch(doOperation(value as Operator))
-                }
+                dispatch(setWaitDigit())
+                dispatch(doOperation(value as Operator))
+                break
+            case "equals":
+                dispatch(equals())
                 break
             case "clear":
                 dispatch(clearDisplay())
+                break
+            case "+/-":
+                dispatch(plusMinus())
+                break
+            case "%":
+
                 break
         }
     }

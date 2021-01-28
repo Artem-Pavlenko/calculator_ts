@@ -2,13 +2,13 @@ export type ButtonType = {
     value: string
     color: 'gray' | 'lightgray' | 'orange'
     id: string
-    type: 'operator' | 'digit' | 'memory' | 'dot' | 'clear'
+    type: 'operator' | 'digit' | 'memory' | 'dot' | 'clear' | '%' | '+/-' | 'equals'
 }
 
 export const buttons: ButtonType[] = [
     {value: 'AC', color: 'lightgray', id: '1', type: 'clear'},
-    {value: '+/-', color: 'lightgray', id: '2', type: 'operator'},
-    {value: '%', color: 'lightgray', id: '3', type: 'operator'},
+    {value: '+/-', color: 'lightgray', id: '2', type: '+/-'},
+    {value: '%', color: 'lightgray', id: '3', type: '%'},
     {value: '/', color: 'orange', id: '4', type: 'operator'},
     {value: 'mc', color: 'gray', id: '5', type: 'memory'},
     {value: 'mr', color: 'gray', id: '6', type: 'memory'},
@@ -28,5 +28,5 @@ export const buttons: ButtonType[] = [
     {value: '+', color: 'orange', id: '20', type: 'operator'},
     {value: '0', color: 'gray', id: '21', type: 'digit'},
     {value: ',', color: 'gray', id: '22', type: 'dot'},
-    {value: '=', color: 'orange', id: '23', type: 'operator'}
+    {value: '=', color: 'orange', id: '23', type: 'equals'}
 ]

@@ -1,7 +1,7 @@
 import {round} from "./utils/helpers"
 
 
-export type Operator = '+' | '-' | '*' | '/' | '=' | null
+export type Operator = '+' | '-' | '*' | '/' | '=' |  null
 export type Digit = '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '0'
 export type ActionsType = ReturnType<typeof onDigitClick>
     | ReturnType<typeof doOperation>
@@ -9,6 +9,8 @@ export type ActionsType = ReturnType<typeof onDigitClick>
     | ReturnType<typeof clearDisplay>
     | ReturnType<typeof setWaitDigit>
     | ReturnType<typeof equals>
+    | ReturnType<typeof plusMinus>
+
 
 
 export type CalcType = {
@@ -51,6 +53,14 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             return {...state, display: '0', leftDigit: '', numTrigger: true, operator: null}
         case "SET_WAIT_DIGIT":
             return {...state, numTrigger: false}
+        case "PLUS_MINUS":
+            const index = display.indexOf('-')
+            if (index === -1) {
+                return {...state, display: '-' + display}
+            } else if (index === 0) {
+                return {...state, display: display.substr(1)}
+            }
+            return {...state, display: '-' + display}
         case "OPERATION":
             // если нету оператора то сетаем его
             if (!operator) {
@@ -169,3 +179,4 @@ export const clearDisplay = () => ({type: 'CLEAR'} as const)
 export const doOperation = (operator: Operator) => ({type: 'OPERATION', operator} as const)
 export const setWaitDigit = () => ({type: 'SET_WAIT_DIGIT'} as const)
 export const equals = () => ({type: 'EQUALS'} as const)
+export const plusMinus = () => ({type: 'PLUS_MINUS'} as const)
