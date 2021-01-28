@@ -21,12 +21,6 @@ const Calculator = () => {
         dispatch(onDigitClick(num))
     }
 
-    // console.log('L :', state.leftDigit)
-    // console.log('R :', state.rightDigit)
-    // console.log('display :', state.display)
-    // console.log('operator', state.operator)
-    // console.log('sort : ', state.trigger)
-
     const onOperation = (operator: Operator) => {
         dispatch(setWaitDigit())
         dispatch(doOperation(operator))

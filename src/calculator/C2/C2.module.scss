@@ -1,0 +1,26 @@
+
+
+.wrapper {
+  margin: 0 auto;
+  width: 470px;
+  padding: 10px;
+  min-height: 400px;
+  background-color: black;
+  .screen {
+    margin-bottom: 15px;
+    text-align: right;
+    color: white;
+    font-size: 60px;
+  }
+
+  .btnBlock {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 10px;
+    //&:nth-last-child(3) {
+    //  width: 250px;
+    //  border-radius: 50px;
+    //}
+  }
+}
