@@ -1,12 +1,12 @@
 import React from 'react'
 import './App.css'
-import Calc2 from './calculator/C2/Calc2'
+import Calculator from './calculator/Calculator/Calculator'
 
 const App = () => {
 
     return (
         <div className="App">
-            <Calc2/>
+            <Calculator/>
         </div>
     )
 }

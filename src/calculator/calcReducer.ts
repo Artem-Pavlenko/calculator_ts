@@ -85,7 +85,6 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
         // }else  if (digit < 0) {
         //     return {...state, display: (digit * -1).toString()}
         // } else return state
-
         case "PERCENT":
             return {...state, display: (+display/100).toString()}
         case "PLUS_TO_MEMORY":
@@ -216,6 +215,7 @@ export const onDot = () => ({type: 'SET_DOT'} as const)
 export const clearDisplay = () => ({type: 'CLEAR'} as const)
 export const doOperation = (operator: Operator) => ({type: 'OPERATION', operator} as const)
 export const setWaitDigit = () => ({type: 'SET_WAIT_DIGIT'} as const)
+
 export const equals = () => ({type: 'EQUALS'} as const)
 export const plusMinus = () => ({type: 'PLUS_MINUS'} as const)
 export const percent = () => ({type: 'PERCENT'} as const)

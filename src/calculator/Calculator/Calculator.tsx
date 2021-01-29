@@ -1,11 +1,11 @@
 import React, {useReducer} from 'react'
 import {calcReducer, initState} from '../calcReducer'
-import s from './C2.module.scss'
+import s from './Calculator.module.scss'
 import {buttons} from '../buutons'
 import Button from '../Button/Button'
 
 
-const Calc2 = () => {
+const Calculator = () => {
 
     const [{display}, dispatch] = useReducer(calcReducer, initState)
 
@@ -21,4 +21,4 @@ const Calc2 = () => {
     )
 }
 
-export default Calc2
+export default Calculator
