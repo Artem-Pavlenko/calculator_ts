@@ -1,19 +1,13 @@
 import React, {Dispatch} from 'react'
 import cn from 'classnames'
 import {
-    ActionsType,
-    clearDisplay,
-    Digit,
-    doOperation, equals,
-    onDigitClick,
-    onDot,
-    Operator, plusMinus,
-    setWaitDigit
+    ActionsType, clearDisplay, Digit, doOperation, equals, memoryClean, memoryRead, minusFromMemory,
+    onDigitClick, onDot, Operator, percent, plusMinus, plusToMemory, setWaitDigit
 } from '../calcReducer'
 import './Button.scss'
 import {ButtonType} from '../buutons'
 
-type ButtonProps = ButtonType & { dispatch: Dispatch<ActionsType> , active?: string | null }
+type ButtonProps = ButtonType & { dispatch: Dispatch<ActionsType>, active?: string | null }
 
 const Button = ({value, color, type, dispatch, active}: ButtonProps) => {
 
@@ -25,8 +19,17 @@ const Button = ({value, color, type, dispatch, active}: ButtonProps) => {
             case "dot":
                 dispatch(onDot())
                 break
-            case "memory":
-                // empty
+            case "mr":
+                dispatch(memoryRead())
+                break
+            case "mc":
+                dispatch(memoryClean())
+                break
+            case "m+":
+                dispatch(plusToMemory())
+                break
+            case "m-":
+                dispatch(minusFromMemory())
                 break
             case "operator":
                 dispatch(setWaitDigit())
@@ -42,14 +45,15 @@ const Button = ({value, color, type, dispatch, active}: ButtonProps) => {
                 dispatch(plusMinus())
                 break
             case "%":
-
+                dispatch(percent())
                 break
         }
     }
 
     return (
         <div className={'wrapper'}>
-            <button className={cn(color, {['zero']: value === '0'}, {['active']: value === active})} onClick={onClick}>{value}</button>
+            <button className={cn(color, {['zero']: value === '0'}, {['active']: value === active})}
+                    onClick={onClick}>{value}</button>
         </div>
     )
 }

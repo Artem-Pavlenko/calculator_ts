@@ -10,6 +10,11 @@ export type ActionsType = ReturnType<typeof onDigitClick>
     | ReturnType<typeof setWaitDigit>
     | ReturnType<typeof equals>
     | ReturnType<typeof plusMinus>
+    | ReturnType<typeof percent>
+    | ReturnType<typeof memoryClean>
+    | ReturnType<typeof memoryRead>
+    | ReturnType<typeof plusToMemory>
+    | ReturnType<typeof minusFromMemory>
 
 
 export type CalcType = {
@@ -17,19 +22,21 @@ export type CalcType = {
     leftDigit: string
     operator: null | Operator
     trigger: boolean
+    memory: string
 }
 
 export const initState: CalcType = {
     display: '0',
     leftDigit: '',
     operator: null,
-    trigger: true
+    trigger: true,
+    memory: '0'
 }
 
 
 export const calcReducer = (state: CalcType = initState, action: ActionsType): CalcType => {
 
-    const {trigger, display, leftDigit, operator} = state
+    const {trigger, display, leftDigit, operator, memory} = state
 
     switch (action.type) {
         case "SET_NUMBER":
@@ -79,6 +86,19 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
         //     return {...state, display: (digit * -1).toString()}
         // } else return state
 
+        case "PERCENT":
+            return {...state, display: (+display/100).toString()}
+        case "PLUS_TO_MEMORY":
+            if (display === 'Ошибка') {
+                return state
+            }
+            return {...state, memory: ((+memory) + (+display)).toString()}
+        case "MINUS_FROM_MEMORY":
+            return {...state, memory: ((+memory) - (+display)).toString()}
+        case "MEMORY_CLEAN":
+            return {...state, memory: '0'}
+        case "MEMORY_READ":
+            return {...state, display: memory}
         case "OPERATION":
             // если нету оператора то сетаем его
             if (!operator) {
@@ -198,3 +218,9 @@ export const doOperation = (operator: Operator) => ({type: 'OPERATION', operator
 export const setWaitDigit = () => ({type: 'SET_WAIT_DIGIT'} as const)
 export const equals = () => ({type: 'EQUALS'} as const)
 export const plusMinus = () => ({type: 'PLUS_MINUS'} as const)
+export const percent = () => ({type: 'PERCENT'} as const)
+
+export const memoryRead = () => ({type: 'MEMORY_READ'} as const)
+export const memoryClean = () => ({type: 'MEMORY_CLEAN'} as const)
+export const plusToMemory = () => ({type: 'PLUS_TO_MEMORY'} as const)
+export const minusFromMemory = () => ({type: 'MINUS_FROM_MEMORY'} as const)
