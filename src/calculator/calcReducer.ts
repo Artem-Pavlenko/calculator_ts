@@ -34,15 +34,13 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
     switch (action.type) {
         case "SET_NUMBER":
 
-            // const index = display.indexOf('-')
+            // (+num).toString() убрать ноль спереду в случае если есть "-"
             if (trigger) {
                 let num = (display === '0' || display === 'Ошибка') ? action.num : display + action.num
-                return {...state, display: num}
+                return {...state, display: (+num).toString()}
             } else if (!trigger) {
                 let num = display === '0.' ? display + action.num : action.num
-                if (display.indexOf('-') === 0) {
-                }
-                return {...state, leftDigit: display, trigger: true, display: num}
+                return {...state, leftDigit: display, trigger: true, display: (+num).toString()}
             } else {
                 return state
             }
@@ -62,7 +60,7 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             const index = display.indexOf('-')
             if (index === -1) {
                 if (operator && !trigger) {
-                    return {...state, display: '-0', leftDigit: display, trigger: true}
+                    return {...state, leftDigit: display, display: '-0',  trigger: true}
                 }
                 return {...state, display: '-' + display}
                 // если есть минус
@@ -73,6 +71,14 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
                 return {...state, display: display.substr(1)}
             }
             return {...state, display: '-' + display}
+
+        // const digit = +display
+        // if (digit > 0) {
+        //     return  {...state, display: '-' + display}
+        // }else  if (digit < 0) {
+        //     return {...state, display: (digit * -1).toString()}
+        // } else return state
+
         case "OPERATION":
             // если нету оператора то сетаем его
             if (!operator) {
