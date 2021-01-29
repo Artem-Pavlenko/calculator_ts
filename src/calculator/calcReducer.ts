@@ -1,4 +1,4 @@
-import {round} from "./utils/helpers"
+import {doMath} from './utils/helpers'
 
 
 export type Operator = '+' | '-' | '*' | '/' | '=' | null
@@ -40,7 +40,6 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
 
     switch (action.type) {
         case "SET_NUMBER":
-
             // (+num).toString() убрать ноль спереду в случае если есть "-"
             if (trigger) {
                 let num = (display === '0' || display === 'Ошибка') ? action.num : display + action.num
@@ -62,15 +61,12 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
         case "SET_WAIT_DIGIT":
             return {...state, trigger: false}
         case "PLUS_MINUS":
-            // !numTrigger  -> display: '-0'
-            // если нету минуса
             const index = display.indexOf('-')
             if (index === -1) {
-                if (operator && !trigger) {
-                    return {...state, leftDigit: display, display: '-0',  trigger: true}
+                if (operator && !trigger || display === 'Ошибка') {
+                    return {...state, leftDigit: display, display: '-0', trigger: true}
                 }
                 return {...state, display: '-' + display}
-                // если есть минус
             } else if (index === 0) {
                 if (operator && !trigger) {
                     return {...state, leftDigit: display, display: '-0', trigger: true}
@@ -79,16 +75,12 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             }
             return {...state, display: '-' + display}
 
-        // const digit = +display
-        // if (digit > 0) {
-        //     return  {...state, display: '-' + display}
-        // }else  if (digit < 0) {
-        //     return {...state, display: (digit * -1).toString()}
-        // } else return state
+            // еслибы не нужно было отображать "-0"
+            // return {...state, display: (+display * -1).toString()}
         case "PERCENT":
-            return {...state, display: (+display/100).toString()}
+            return {...state, display: (+display / 100).toString()}
         case "PLUS_TO_MEMORY":
-            if (display === 'Ошибка') {
+            if (display === 'Ошибка' || display === '0') {
                 return state
             }
             return {...state, memory: ((+memory) + (+display)).toString()}
@@ -99,110 +91,22 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
         case "MEMORY_READ":
             return {...state, display: memory}
         case "OPERATION":
-            // если нету оператора то сетаем его
             if (!operator) {
                 // если после точки не было введено значение (цыфру)
                 if (display === '0.') {
                     return {...state, operator: action.operator, display: '0'}
                 }
                 return {...state, operator: action.operator}
-                // return {...state, operator: action.operator, leftDigit: display}
-
-                // в случае если уже был задан оператор и хотим выполнить следующее вычисление
             } else if (operator) {
-
                 if (!leftDigit && (display === '0' || display === '0.')) {
                     return {...state, display: '0', leftDigit: '', trigger: true, operator: null}
                 }
-                // проходимся по свичу, выполняя операцию ранее заданую, и сетаем следущий оператор
-                switch (operator) {
-                    case "+":
-                        const plusNum = round((+leftDigit) + (+display)).toString()
-                        if (leftDigit) {
-
-                            return {
-                                ...state, leftDigit: plusNum, operator: action.operator,
-                                trigger: false, display: plusNum
-                            }
-                        } else {
-                            return {...state, operator: action.operator}
-                        }
-                    case "-":
-                        const minusNum = round((+leftDigit) - (+display)).toString()
-                        if (leftDigit) {
-                            return {
-                                ...state, leftDigit: minusNum, operator: action.operator,
-                                trigger: false, display: minusNum
-                            }
-                        } else {
-                            return {...state, operator: action.operator}
-                        }
-                    case "*":
-                        const multipliedNum = round((+leftDigit) * (+display)).toString()
-                        if (leftDigit) {
-                            return {
-                                ...state, leftDigit: multipliedNum, operator: action.operator,
-                                trigger: false, display: multipliedNum
-                            }
-                        } else {
-                            return {...state, operator: action.operator}
-                        }
-                    case "/":
-                        const splitNum = round((+leftDigit) / (+display)).toString()
-                        // делить на 0 нельзя =)
-                        if (display === '0' || display === "0.") return {
-                            ...state,
-                            leftDigit: '',
-                            display: 'Ошибка',
-                            operator: null,
-                            trigger: true
-                        }
-                        if (leftDigit) {
-                            return {
-                                ...state, leftDigit: splitNum, operator: action.operator,
-                                trigger: false, display: splitNum
-                            }
-                        } else {
-                            return {...state, operator: action.operator}
-                        }
-                }
+                return doMath(state, action.operator)
             }
             return state
         case "EQUALS":
             if (operator) {
-                switch (operator) {
-                    case "+":
-                        const plusNum = round((+leftDigit) + (+display)).toString()
-                        return {
-                            ...state, leftDigit: plusNum, operator: null,
-                            trigger: false, display: plusNum
-                        }
-                    case "-":
-                        const minusNum = round((+leftDigit) - (+display)).toString()
-                        return {
-                            ...state, leftDigit: minusNum, operator: null,
-                            trigger: false, display: minusNum
-                        }
-                    case "*":
-                        const multipliedNum = round((+leftDigit) * (+display)).toString()
-                        return {
-                            ...state, leftDigit: multipliedNum, operator: null,
-                            trigger: false, display: multipliedNum
-                        }
-                    case "/":
-                        const splitNum = round((+leftDigit) / (+display)).toString()
-                        if (display === '0' || display === "0.") return {
-                            ...state,
-                            leftDigit: '',
-                            display: 'Ошибка',
-                            operator: null,
-                            trigger: true
-                        }
-                        return {
-                            ...state, leftDigit: splitNum, operator: null,
-                            trigger: false, display: splitNum
-                        }
-                }
+                return doMath(state, null)
             }
             return state
         default:
