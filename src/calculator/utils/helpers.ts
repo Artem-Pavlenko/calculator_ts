@@ -1,8 +1,8 @@
 import {CalcType, Operator} from '../calcReducer'
 
-export function round(value: number, decimals: number = 7) {
+export function round(value: number, decimals: number = 8): number | 'Ошибка' {
     const result = Number(Math.round(Number(value + 'e' + decimals)) + 'e-' + decimals)
-    if (!result) {
+    if (isNaN(result)) {
         return 'Ошибка'
     }
     return result
@@ -42,7 +42,7 @@ export const doMath = (state: CalcType, newOperator: null | Operator): CalcType 
                     trigger: false, display: multipliedNum
                 }
             } else {
-                return {...state, operator: newOperator}
+                return {...state, display: '0', operator: newOperator}
             }
         case "/":
             const splitNum = round((+leftDigit) / (+display)).toString()
@@ -60,7 +60,7 @@ export const doMath = (state: CalcType, newOperator: null | Operator): CalcType 
                     trigger: false, display: splitNum
                 }
             } else {
-                return {...state, operator: newOperator}
+                return {...state, display: '0', operator: newOperator}
             }
         default:
             return state

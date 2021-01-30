@@ -1,4 +1,4 @@
-import {doMath} from './utils/helpers'
+import {doMath, round} from './utils/helpers'
 
 
 export type Operator = '+' | '-' | '*' | '/' | '=' | null
@@ -79,10 +79,10 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
         // return {...state, display: (+display * -1).toString()}
         case "PERCENT":
             if (leftDigit && operator) {
-                const percent = ((+display / 100) * +leftDigit).toString()
-                return {...state, display: percent}
+                const percent = round((+display / 100) * +leftDigit).toString()
+                return {...state, display: percent, trigger: false}
             }
-            return {...state, display: (+display / 100).toString()}
+            return {...state, display: (+display / 100).toString(), trigger: false}
         case "PLUS_TO_MEMORY":
             if (display === 'Ошибка' || display === '0') {
                 return state
