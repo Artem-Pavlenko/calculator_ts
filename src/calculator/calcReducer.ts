@@ -63,7 +63,7 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
         case "PLUS_MINUS":
             const index = display.indexOf('-')
             if (index === -1) {
-                if (operator && !trigger || display === 'Ошибка') {
+                if ((operator && !trigger) || display === 'Ошибка') {
                     return {...state, leftDigit: display, display: '-0', trigger: true}
                 }
                 return {...state, display: '-' + display}
@@ -75,9 +75,13 @@ export const calcReducer = (state: CalcType = initState, action: ActionsType): C
             }
             return {...state, display: '-' + display}
 
-            // еслибы не нужно было отображать "-0"
-            // return {...state, display: (+display * -1).toString()}
+        // еслибы не нужно было отображать "-0"
+        // return {...state, display: (+display * -1).toString()}
         case "PERCENT":
+            if (leftDigit && operator) {
+                const percent = ((+display / 100) * +leftDigit).toString()
+                return {...state, display: percent}
+            }
             return {...state, display: (+display / 100).toString()}
         case "PLUS_TO_MEMORY":
             if (display === 'Ошибка' || display === '0') {
